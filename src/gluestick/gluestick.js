@@ -17,8 +17,6 @@ export default class Gluestick extends React.Component {
   observeHeaders = container => {
     const observer = new IntersectionObserver((records, observer) => {
       for (const record of records) {
-
-        console.log('Header', { record });
         const targetInfo = record.boundingClientRect;
         const stickyTarget = record.target.parentElement;
         const rootBoundsInfo = record.rootBounds;
@@ -47,8 +45,6 @@ export default class Gluestick extends React.Component {
   observeFooters = container => {
     const observer = new IntersectionObserver((records, observer) => {
       for (const record of records) {
-
-        console.log('Footer ', { record });
         const targetInfo = record.boundingClientRect;
         const stickyTarget = record.target.parentElement;
         const rootBoundsInfo = record.rootBounds;
@@ -85,7 +81,6 @@ export default class Gluestick extends React.Component {
 
   adjustSentinelHeight = (sentinels) => {
     sentinels.forEach((sentinel) => {
-      console.log({ sentinel });
       const height = sentinel.parentElement.offsetHeight;
       sentinel.style.height = `${height}px`;
     });
@@ -100,7 +95,7 @@ export default class Gluestick extends React.Component {
     const header = e.detail.target;  // header became sticky or stopped sticking.
     const sticking = e.detail.stuck; // true when header is sticky.
     // header.classList.toggle('shadow', sticking); // add drop shadow when sticking.
-    console.log(header, sticking);
+    console.log(header.id, sticking);
 
     this.setState({
       sticking: header.id

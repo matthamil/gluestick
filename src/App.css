@@ -1,0 +1,21 @@
+.question {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: green;
+  color: white;
+  padding: 5px 10px;
+}
+
+.question-table {
+  background-color: greenyellow;
+  color: black;
+  border-radius: 2px;
+  padding: 5px 10px;
+  font-size: 0.5rem;
+}
+
+.selected {
+  background-color: blue !important;
+}

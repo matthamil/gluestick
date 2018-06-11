@@ -1,0 +1,17 @@
+.glue-sentinel {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.glue-sentinel__top {
+  height: 1px;
+  top: -1px;
+  background-color: rgba(253, 255, 114, 0.781)
+}
+
+.glue-sentinel__bottom {
+  height: 20px;
+  bottom: 0;
+  background-color: rgba(252, 181, 246, 0.06);
+}

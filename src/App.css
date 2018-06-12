@@ -19,3 +19,7 @@
 .selected {
   background-color: blue !important;
 }
+
+.hidden {
+  display: none;
+}

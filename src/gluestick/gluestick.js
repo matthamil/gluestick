@@ -5,110 +5,172 @@ export default class Gluestick extends React.Component {
     super(props);
 
     this.state = {
-      sticking: null
+      currentStick: null,
     };
   }
 
   observeStickyHeaderChanges = container => {
-    this.observeHeaders(container);
-    this.observeFooters(container);
+    this.observeQuestion(container);
+    // this.observeSentinelTop(container);
   };
 
-  observeHeaders = container => {
+  observeQuestion = container => {
     const observer = new IntersectionObserver((records, observer) => {
       for (const record of records) {
-        const targetInfo = record.boundingClientRect;
-        const stickyTarget = record.target.parentElement;
-        const rootBoundsInfo = record.rootBounds;
+        console.log({ record });
 
-        // Started sticking.
+        const targetInfo = record.boundingClientRect;
+        const stickyTarget = record.target;
+        const rootBoundsInfo = record.rootBounds;
+        const ratio = record.intersectionRatio;
+        const currentStuck = this.state.currentStickNode;
+
+        const bottomOfStuck = currentStuck && currentStuck.offsetHeight;
+        // debugger;
+
+        // Scrolled out of view.
         if (targetInfo.bottom < rootBoundsInfo.top) {
+          // debugger;
+          // IF currentStuck === stickyTarget
+          // Is current stick + 1 in view?
+          //   incrementCurrentStick
+          // else
+          //   decrementCurrentStick
+          // debugger;
+
+          if (currentStuck === stickyTarget) {
+            this.incrementCurrentStick();
+          } else {
+            this.decrementCurrentStick();
+          }
+          this.fireEvent(false, stickyTarget);
+        }
+
+        // Stuck to top
+        if (stickyTarget.offsetTop === 0) {
           // debugger;
           this.fireEvent(true, stickyTarget);
         }
 
+        // started sticking
+        // if (
+        //   targetInfo.bottom > rootBoundsInfo.top && ratio === 1
+        // ) {
+        //   debugger;
+        //   this.fireEvent(true, stickyTarget);
+        // }
+        // if (targetInfo.top === rootBoundsInfo.top && ratio === 1) {
+        //   this.fireEvent(true, stickyTarget);
+        // }
+
         // Stopped sticking.
-        if (targetInfo.bottom >= rootBoundsInfo.top &&
-          targetInfo.bottom < rootBoundsInfo.bottom &&
-          targetInfo.top !== rootBoundsInfo.top
-        ) {
-          this.fireEvent(false, stickyTarget);
-        }
+        // if (targetInfo.bottom >= rootBoundsInfo.top &&
+        //   targetInfo.bottom < rootBoundsInfo.bottom &&
+        //   targetInfo.top !== rootBoundsInfo.top
+        // ) {
+        //   debugger;
+        //   this.fireEvent(false, stickyTarget);
+        // }
       }
     }, { threshold: [0], root: container });
 
     // Add the top sentinels to each section and attach an observer.
-    const sentinels = document.querySelectorAll('.glue-sentinel__top');
+    const sentinels = document.querySelectorAll('.question');
+    window.sentinels = sentinels;
     sentinels.forEach(el => observer.observe(el));
   };
 
-  observeFooters = container => {
-    const observer = new IntersectionObserver((records, observer) => {
-      for (const record of records) {
-        const targetInfo = record.boundingClientRect;
-        const stickyTarget = record.target.parentElement;
-        const rootBoundsInfo = record.rootBounds;
-        const ratio = record.intersectionRatio;
-        // Started sticking.
-        if (
-          targetInfo.bottom > rootBoundsInfo.top && ratio === 1
-        ) {
-          // debugger;
-          this.fireEvent(true, stickyTarget);
-        }
+  // observeSentinelTop = container => {
+  //   const observer = new IntersectionObserver((records, observer) => {
+  //     for (const record of records) {
+  //       const targetInfo = record.boundingClientRect;
+  //       const stickyTarget = record.target.parentElement;
+  //       const rootBoundsInfo = record.rootBounds;
+  //       const currentStuck = this.state.currentStickNode;
 
-        // Stopped sticking.
-        if (targetInfo.top < rootBoundsInfo.top &&
-          targetInfo.bottom < rootBoundsInfo.bottom) {
-          this.fireEvent(false, stickyTarget);
-        }
-      }
-    }, { threshold: [1], root: container });
+  //       const bottomOfStuck = currentStuck && currentStuck.offsetHeight;
 
-    // Add the bottom sentinels to each section and attach an observer.
-    const sentinels = document.querySelectorAll('.glue-sentinel__bottom');
-    this.adjustSentinelHeight(sentinels);
-    sentinels.forEach(el => observer.observe(el));
-  }
+  //       debugger;
+  //       // Started sticking.
+  //       if (targetInfo.top < rootBoundsInfo.top) {
+  //         this.fireEvent(true, stickyTarget);
+  //       }
 
-  addSentinels = (container, className) => {
-    return Array.from(container.querySelectorAll('.sticky')).map(el => {
-      const sentinel = document.createElement('div');
-      sentinel.classList.add('glue-sentinel', className);
-      return el.parentElement.appendChild(sentinel);
-    });
-  }
+  //       // Stopped sticking.
+  //       if (targetInfo.bottom >= rootBoundsInfo.top &&
+  //         targetInfo.bottom < rootBoundsInfo.bottom) {
+  //         this.fireEvent(false, stickyTarget);
+  //       }
+  //     }
+  //   }, { threshold: [0], root: container });
 
-  adjustSentinelHeight = (sentinels) => {
-    sentinels.forEach((sentinel) => {
-      const height = sentinel.parentElement.offsetHeight;
-      sentinel.style.height = `${height}px`;
-    });
-  };
+  //   // Add the top sentinels to each section and attach an observer.
+  //   const sentinels = document.querySelectorAll('.glue-sentinel__top');
+  //   window.sentinelTops = sentinels;
+  //   sentinels.forEach(el => observer.observe(el));
+  // }
 
   fireEvent = (stuck, target) => {
     const e = new CustomEvent('sticky-change', { detail: { stuck, target } });
     document.dispatchEvent(e);
   }
 
+  setCurrentStick = (id, node) => {
+    this.setState({
+      currentStick: id,
+      currentStickNode: node
+    });
+  };
+
+  incrementCurrentStick = () => {
+    if (this.state.currentStick === null) return;
+    this.setState(prevState => {
+      const currentStick = Number(prevState.currentStick) + 1;
+      const next = document.getElementById(currentStick);
+      // debugger;
+      // const elementToHideHeight = next.querySelector('.question-table');
+      // document.getElementById('scroll-container').scroll(
+      //   elementToHideHeight.offsetTop,
+      //   elementToHideHeight.offsetTop
+      // );
+      return {
+        currentStick,
+        currentStickNode: next,
+      };
+    }, () => {
+      document.getElementById('scroll-container').scroll(
+        this.state.currentStickNode.offsetTop + 1,
+        this.state.currentStickNode.offsetTop + 1
+      )
+    });
+  };
+
+  decrementCurrentStick = () => {
+    if (this.state.currentStick === null) return;
+    this.setState(prevState => {
+      const currentStick = Number(prevState.currentStick) - 1;
+      const previous = document.getElementById(currentStick);
+      document.getElementById('scroll-container').scroll(
+        previous.offsetTop,
+        previous.offsetTop
+      );
+      return {
+        currentStick,
+        currentStickNode: previous
+      };
+    }, () => {
+      console.log(this.state);
+    });
+  };
+
   handleStickyChange = e => {
     const header = e.detail.target;  // header became sticky or stopped sticking.
     const sticking = e.detail.stuck; // true when header is sticky.
-    // header.classList.toggle('shadow', sticking); // add drop shadow when sticking.
     console.log(header.id, sticking);
 
-    this.setState({
-      sticking: header.id
-    });
-
-    // header.classList.toggle('selected', sticking);
-    // if (sticking) {
-    //   console.log(`${header.id} is now stuck.`);
-    // }
-    // else {
-    //   console.log(`${header.id} is NOT sticking.`);
-    // }
-    // document.querySelector('.who-is-sticking').textContent = header.textContent;
+    if (sticking) {
+      this.setCurrentStick(header.id, e.detail.target);
+    }
   }
 
   stickyListener = () => {
@@ -119,15 +181,10 @@ export default class Gluestick extends React.Component {
     const container = document.querySelector('#scroll-container');
     this.observeStickyHeaderChanges(container);
     this.stickyListener();
-
-    // const firstNode = document.querySelector('#section-1');
-    // if (firstNode.className.includes('selected')) {
-    //   return;
-    // }
-    // firstNode.className += ' selected';
   }
 
   render() {
-    return this.props.children(this.state.sticking);
+    console.log(this.state);
+    return this.props.children(this.state.currentStick);
   }
 }

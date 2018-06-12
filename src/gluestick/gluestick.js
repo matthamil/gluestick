@@ -41,7 +41,7 @@ export default class Gluestick extends React.Component {
           if (currentStuck === stickyTarget) {
             this.incrementCurrentStick();
           } else {
-            this.decrementCurrentStick();
+            // this.decrementCurrentStick();
           }
           this.fireEvent(false, stickyTarget);
         }
@@ -50,6 +50,7 @@ export default class Gluestick extends React.Component {
         if (stickyTarget.offsetTop === 0) {
           // debugger;
           this.fireEvent(true, stickyTarget);
+          // this.decrementCurrentStick();
         }
 
         // started sticking
@@ -64,13 +65,14 @@ export default class Gluestick extends React.Component {
         // }
 
         // Stopped sticking.
-        // if (targetInfo.bottom >= rootBoundsInfo.top &&
-        //   targetInfo.bottom < rootBoundsInfo.bottom &&
-        //   targetInfo.top !== rootBoundsInfo.top
-        // ) {
-        //   debugger;
-        //   this.fireEvent(false, stickyTarget);
-        // }
+        if (targetInfo.bottom >= rootBoundsInfo.top &&
+          targetInfo.bottom < rootBoundsInfo.bottom &&
+          targetInfo.top !== rootBoundsInfo.top &&
+          currentStuck.offsetTop !== 0
+        ) {
+          this.fireEvent(true, stickyTarget);
+          // this.decrementCurrentStick();
+        }
       }
     }, { threshold: [0], root: container });
 
@@ -185,6 +187,6 @@ export default class Gluestick extends React.Component {
 
   render() {
     console.log(this.state);
-    return this.props.children(this.state.currentStick);
+    return this.props.children(Number(this.state.currentStick));
   }
 }

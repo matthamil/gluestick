@@ -4,6 +4,17 @@ import GlueStick from './gluestick/gluestick';
 import "./App.css";
 
 export default class App extends React.Component {
+  jumpToQuestion = id => {
+    const node = document.getElementById(id);
+    node.style.position = 'relative';
+    // node.style.position = 'sticky';
+    document.getElementById('scroll-container').scroll(
+      node.offsetTop + 1,
+      node.offsetTop + 1
+    )
+    node.style.position = 'sticky';
+  }
+
   render() {
     return (
       <div style={{
@@ -12,6 +23,7 @@ export default class App extends React.Component {
         justifyContent: 'space-around',
         alignItems: 'center'
       }}>
+
         <div
           id="scroll-container"
           style={{
@@ -20,6 +32,7 @@ export default class App extends React.Component {
             margin: '0 auto',
             height: '60vh'
           }}>
+
           <GlueStick>
             {(currentStick) => (
               [1, 2, 3, 4, 5, 6, 7, 8].map(i => (
@@ -60,7 +73,13 @@ export default class App extends React.Component {
               ))
             )}
           </GlueStick>
+
         </div>
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+          <button onClick={() => this.jumpToQuestion(i)}>
+            Jump to {i}
+          </button>
+        ))}
       </div>
     );
   }

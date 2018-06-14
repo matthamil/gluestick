@@ -4,6 +4,17 @@ import GlueStick from './gluestick/gluestick';
 import "./App.css";
 
 export default class App extends React.Component {
+  jumpToQuestion = id => {
+    const node = document.getElementById(id);
+    node.style.position = 'relative';
+    // node.style.position = 'sticky';
+    document.getElementById('scroll-container').scroll(
+      node.offsetTop + 1,
+      node.offsetTop + 1
+    )
+    node.style.position = 'sticky';
+  }
+
   render() {
     return (
       <div style={{
@@ -12,6 +23,7 @@ export default class App extends React.Component {
         justifyContent: 'space-around',
         alignItems: 'center'
       }}>
+
         <div
           id="scroll-container"
           style={{
@@ -20,15 +32,15 @@ export default class App extends React.Component {
             margin: '0 auto',
             height: '60vh'
           }}>
+
           <GlueStick>
-            {(sticking) => (
+            {(currentStick) => (
               [1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                 <div className="question-wrapper" key={i}>
-                  <div className={`question ${sticking === `section-${i}` ? 'selected' : ''}`} id={`section-${i}`}>
+                  <div className={`question ${currentStick === i ? 'selected' : ''}`} id={i}>
                     <GlueSentinelTop />
-                    Section {i}
-
-                    {i % 2 === 0 && (sticking !== `section-${i}`) ?
+                    Question {i}
+                    {i % 2 === 0 && (currentStick !== i) ?
                       <div className="question-table">
                         <table>
                           <thead>
@@ -51,7 +63,6 @@ export default class App extends React.Component {
                         </table>
                       </div>
                       : null}
-                    <GlueSentinelBottom />
                   </div>
                   <div className="question-content">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ut quam quis ipsum finibus pharetra. Sed sodales viverra dignissim. Ut dapibus congue orci, sit amet molestie velit eleifend sit amet. Mauris et nunc accumsan, dictum leo et, tempus est. Sed pulvinar erat sit amet consectetur dignissim. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris eu neque eu mi condimentum feugiat. Suspendisse potenti. Etiam vehicula dignissim accumsan. Aenean nisi nulla, ultricies ac porta ut, feugiat nec libero. Duis sem libero, euismod vitae rutrum eu, dapibus non mauris. Nullam volutpat augue sit amet tortor vulputate rutrum. Nullam sit amet nisl varius, aliquam orci eu, egestas turpis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
@@ -62,7 +73,13 @@ export default class App extends React.Component {
               ))
             )}
           </GlueStick>
+
         </div>
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+          <button onClick={() => this.jumpToQuestion(i)}>
+            Jump to {i}
+          </button>
+        ))}
       </div>
     );
   }

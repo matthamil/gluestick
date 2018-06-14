@@ -5,8 +5,8 @@
 }
 
 .glue-sentinel__top {
-  height: 1px;
-  top: -1px;
+  height: 10px;
+  top: -10px;
   background-color: rgba(253, 255, 114, 0.781)
 }
 
